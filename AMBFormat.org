@@ -1,0 +1,112 @@
+
+* AMB overview
+  AMB files are used by the game Sid Meier's Civilization III. They describe a sound effect as a combination of sound files with randomized effects
+  applied. As far as I know these files were created by Firaxis for Civ 3 and never used for anything else.
+
+* References
+  - Overview of MIDIs:
+    https://www.skytopia.com/project/articles/midi.html
+  - MIDI spec:
+    https://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+  - Previous work:
+    https://forums.civfanatics.com/threads/modifying-amb-files.326218/
+    https://forums.civfanatics.com/threads/sounds-overlapping-repeating.347898/
+    https://forums.civfanatics.com/threads/sounds-question-on-amb-files.112884/#post-2579780
+
+* Format overview
+  An AMB file is made up of many Prgm and Kmap chunks, exactly one Glbl chunk, and exactly one embedded Midi file. AMBs follow the Resource
+  Interchange File Format, so every chunk begins with a 4-character identifier followed by a 4-byte integer size. The embedded Midi specifies a time
+  offset at which each component sound is to be played. Each component sound corresponds to a Prgm chunk which specifies randomized effects and a
+  variable name. Finally the variable name is associated with a sound file name by a Kmap chunk. As far as I can tell, the Glbl chunk contains no
+  useful information.
+
+* Endianess and null termination conventions
+  Be aware that the AMB files use two different conventions here. Inside the embedded Midi file integers are big endian and strings are not
+  null-terminated, while outside the embedded Midi, i.e., in the Prgm, Kmap, and Glbl chunks, integers are little endian and strings are null
+  terminated.
+
+* Type definitions
+  - tag: Array of 4 ASCII characters
+  - int: 4-byte integer. Signedness unknown, but the value contained is positive and too small for it to make a difference
+  - signed int: 4-byte integer that is definitely signed
+  - short: 2-byte integer
+  - str+0: String including null terminator
+  - str: String without null terminator
+  - vlq: "variable length quantity" from Midi spec. Check the spec for all the details but the jist of it is that a VLQ is a simple compression scheme
+    for 4-byte integers. In each VLQ byte, the bottom 7 bits come from the compressed integer and the 8th bit indicates whether or not the next byte
+    from the file is also part of the VLQ.
+
+* Prgm chunk
+| TYPE       | CONTENTS         | COMMENT                                                                                                      |
+|------------+------------------+--------------------------------------------------------------------------------------------------------------|
+| tag        | 'prgm'           |                                                                                                              |
+| int        | chunk_size       |                                                                                                              |
+| int        | prgm_number      | Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb |
+|            |                  | both the fifth and eigth prgm chunks have number 5.                                                          |
+| int        | flags            | Bit 0 = random pitch, bit 1 = ?                                                                              |
+| int        | max_random_pitch |                                                                                                              |
+| signed int | min_random_pitch | Often negative                                                                                               |
+| int        | ?                |                                                                                                              |
+| int        | ?                |                                                                                                              |
+| int        | 0xFA             | Chunk end indicator, except in this case there are two more fields                                           |
+| str+0      | effect_name (?)  |                                                                                                              |
+| str+0      | var_name         | Matches names in Kmap chunks                                                                                 |
+
+* KmapItem
+| TYPE     | CONTENTS                                | COMMENT                            |
+|----------+-----------------------------------------+------------------------------------|
+| byte[12] | [0x7F, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0] | Probably 3 4-byte ints: 127, 0, 1. |
+| str+0    | wav_file_name                           |                                    |
+
+* Kmap chunk
+| TYPE       | CONTENTS   | COMMENT                                                                                                         |
+|------------+------------+-----------------------------------------------------------------------------------------------------------------|
+| tag        | 'kmap'     |                                                                                                                 |
+| int        | chunk_size |                                                                                                                 |
+| int        | 2          | Looks like bit flags                                                                                            |
+| int        | 0          |                                                                                                                 |
+| int        | 0          |                                                                                                                 |
+| str+0      | var_name   | Matches name from a Prgm chunk                                                                                  |
+| int        | item_count | Number of items in the following array. All Kmap chunks in Civ 3 have 1 item except for 3 of them which have 0. |
+| int        | 12         | Item data size                                                                                                  |
+| KmapItem[] | items      |                                                                                                                 |
+| int        | 0xFA       | Chunk end indicator                                                                                             |
+
+* Glbl chunk
+| TYPE     | CONTENTS                                         | COMMENT                 |
+|----------+--------------------------------------------------+-------------------------|
+| tag      | 'glbl'                                           |                         |
+| int      | chunk_size                                       |                         |
+| int      | 12                                               | Size of following array |
+| byte[12] | [0, 0, 0, 0, 0, 0, 0, 0, 0xCD, 0xCD, 0xCD, 0xCD] |                         |
+
+* InfoTrack
+| TYPE                     | COMMENT                                              |
+|--------------------------+------------------------------------------------------|
+| vlq, TrackName event     | All info tracks are named "Seq-1"                    |
+| vlq, SMPTEOffset event   | Irrelevant as far as I can tell                      |
+| vlq, TimeSignature event |                                                      |
+| vlq, SetTempo event      | Specifies the tempo in microseconds per quarter note |
+| vlq, EndOfTrack event    |                                                      |
+
+* SoundTrack
+| TYPE                         | COMMENT                       |
+|------------------------------+-------------------------------|
+| vlq, TrackName event         |                               |
+| (vlq, ControlChange event)[] | Array length is either 1 or 2 |
+| vlq, ProgramChange event     |                               |
+| vlq, NoteOn event            |                               |
+| vlq, NoteOff event           |                               |
+| vlq, EndOfTrack event        |                               |
+
+* Embedded Midi
+| TYPE         | CONTENTS               | COMMENT                                                                                                      |
+|--------------+------------------------+--------------------------------------------------------------------------------------------------------------|
+| tag          | 'MThd'                 |                                                                                                              |
+| int          | 6                      | Header size                                                                                                  |
+| short        | 1                      | Midi format                                                                                                  |
+| short        | track_count            | Always >= 2 and <= 13                                                                                        |
+| short        | ticks_per_quarter_note | "Division" in the Midi spec. All AMBs in Civ 3 use "metric time", i.e., this field specifies the length of a |
+|              |                        | quarter note in delta time ticks                                                                             |
+| InfoTrack    | info_track             | First track contains no sound data, just info about the tempo                                                |
+| SoundTrack[] | sound_tracks           | Array length = track_count - 1                                                                               |
