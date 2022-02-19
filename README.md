@@ -1,0 +1,1 @@
+This repo contains my work analyzing the AMB file format used by Sid Meier's Civilization III. See [AMBFormat.org](AMBFormat.org) for an overview of the format and the layouts of all chunk types. [AMBReader.py](AMBReader.py) is a Python script I've been using to explore & experiment with the AMBs. It can be used to display their contents, see the file itself for basic usage info.
