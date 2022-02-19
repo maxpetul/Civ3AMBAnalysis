@@ -1,21 +1,21 @@
 
 # Table of Contents
 
-1.  [AMB overview](#orgaa17ea4)
-2.  [References](#orgd9b7c76)
-3.  [Format overview](#org52647e8)
-4.  [Endianess and null termination conventions](#org36451de)
-5.  [Type definitions](#orgb89985e)
-6.  [Prgm chunk](#org287b5b0)
-7.  [KmapItem](#org5ffe701)
-8.  [Kmap chunk](#orgf1dad1b)
-9.  [Glbl chunk](#orgc84b229)
-10. [InfoTrack](#orgfc23b9a)
-11. [SoundTrack](#orgcb308f7)
-12. [Embedded Midi](#org750a5d0)
+1.  [AMB overview](#orge95a964)
+2.  [Useful links](#orgc111dbe)
+3.  [Format overview](#org64a43d8)
+4.  [Endianess and null termination conventions](#org2ef1ee8)
+5.  [Type definitions](#org30c9479)
+6.  [Prgm chunk](#orga48220d)
+7.  [KmapItem](#org1b60f5e)
+8.  [Kmap chunk](#orgb6b3b9b)
+9.  [Glbl chunk](#org63db5af)
+10. [InfoTrack](#org79b9b3b)
+11. [SoundTrack](#org66bed77)
+12. [Embedded Midi](#org9836c50)
 
 
-<a id="orgaa17ea4"></a>
+<a id="orge95a964"></a>
 
 # AMB overview
 
@@ -23,21 +23,21 @@ AMB files are used by the game Sid Meier's Civilization III. They describe a sou
 applied. As far as I know these files were created by Firaxis for Civ 3 and never used for anything else.
 
 
-<a id="orgd9b7c76"></a>
+<a id="orgc111dbe"></a>
 
-# References
+# Useful links
 
 -   Overview of MIDIs:
     <https://www.skytopia.com/project/articles/midi.html>
 -   MIDI spec:
     <https://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf>
 -   Previous work:
-    <https://forums.civfanatics.com/threads/modifying-amb-files.326218/>
-    <https://forums.civfanatics.com/threads/sounds-overlapping-repeating.347898/>
-    <https://forums.civfanatics.com/threads/sounds-question-on-amb-files.112884/#post-2579780>
+    -   <https://forums.civfanatics.com/threads/modifying-amb-files.326218/>
+    -   <https://forums.civfanatics.com/threads/sounds-overlapping-repeating.347898/>
+    -   <https://forums.civfanatics.com/threads/sounds-question-on-amb-files.112884/#post-2579780>
 
 
-<a id="org52647e8"></a>
+<a id="org64a43d8"></a>
 
 # Format overview
 
@@ -48,7 +48,7 @@ variable name. Finally the variable name is associated with a sound file name by
 useful information.
 
 
-<a id="org36451de"></a>
+<a id="org2ef1ee8"></a>
 
 # Endianess and null termination conventions
 
@@ -57,7 +57,7 @@ null-terminated, while outside the embedded Midi, i.e., in the Prgm, Kmap, and G
 terminated.
 
 
-<a id="orgb89985e"></a>
+<a id="org30c9479"></a>
 
 # Type definitions
 
@@ -72,7 +72,7 @@ terminated.
     from the file is also part of the VLQ.
 
 
-<a id="org287b5b0"></a>
+<a id="orga48220d"></a>
 
 # Prgm chunk
 
@@ -104,22 +104,15 @@ terminated.
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">chunk<sub>size</sub></td>
+<td class="org-left">chunk size</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">prgm<sub>number</sub></td>
-<td class="org-left">Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb</td>
-</tr>
-
-
-<tr>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">both the fifth and eigth prgm chunks have number 5.</td>
+<td class="org-left">prgm number</td>
+<td class="org-left">Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb both the fifth and eigth prgm chunks have number 5.</td>
 </tr>
 
 
@@ -132,14 +125,14 @@ terminated.
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">max<sub>random</sub><sub>pitch</sub></td>
+<td class="org-left">max random pitch</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
 <td class="org-left">signed int</td>
-<td class="org-left">min<sub>random</sub><sub>pitch</sub></td>
+<td class="org-left">min random pitch</td>
 <td class="org-left">Often negative</td>
 </tr>
 
@@ -167,21 +160,21 @@ terminated.
 
 <tr>
 <td class="org-left">str+0</td>
-<td class="org-left">effect<sub>name</sub> (?)</td>
+<td class="org-left">effect name (?)</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
 
 <tr>
 <td class="org-left">str+0</td>
-<td class="org-left">var<sub>name</sub></td>
+<td class="org-left">var name</td>
 <td class="org-left">Matches names in Kmap chunks</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org5ffe701"></a>
+<a id="org1b60f5e"></a>
 
 # KmapItem
 
@@ -213,14 +206,14 @@ terminated.
 
 <tr>
 <td class="org-left">str+0</td>
-<td class="org-left">wav<sub>file</sub><sub>name</sub></td>
+<td class="org-left">wav file name</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="orgf1dad1b"></a>
+<a id="orgb6b3b9b"></a>
 
 # Kmap chunk
 
@@ -252,7 +245,7 @@ terminated.
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">chunk<sub>size</sub></td>
+<td class="org-left">chunk size</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -280,14 +273,14 @@ terminated.
 
 <tr>
 <td class="org-left">str+0</td>
-<td class="org-left">var<sub>name</sub></td>
+<td class="org-left">var name</td>
 <td class="org-left">Matches name from a Prgm chunk</td>
 </tr>
 
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">item<sub>count</sub></td>
+<td class="org-left">item count</td>
 <td class="org-left">Number of items in the following array. All Kmap chunks in Civ 3 have 1 item except for 3 of them which have 0.</td>
 </tr>
 
@@ -315,7 +308,7 @@ terminated.
 </table>
 
 
-<a id="orgc84b229"></a>
+<a id="org63db5af"></a>
 
 # Glbl chunk
 
@@ -347,7 +340,7 @@ terminated.
 
 <tr>
 <td class="org-left">int</td>
-<td class="org-left">chunk<sub>size</sub></td>
+<td class="org-left">chunk size</td>
 <td class="org-left">&#xa0;</td>
 </tr>
 
@@ -368,7 +361,7 @@ terminated.
 </table>
 
 
-<a id="orgfc23b9a"></a>
+<a id="org79b9b3b"></a>
 
 # InfoTrack
 
@@ -420,7 +413,7 @@ terminated.
 </table>
 
 
-<a id="orgcb308f7"></a>
+<a id="org66bed77"></a>
 
 # SoundTrack
 
@@ -478,7 +471,7 @@ terminated.
 </table>
 
 
-<a id="org750a5d0"></a>
+<a id="org9836c50"></a>
 
 # Embedded Midi
 
@@ -524,36 +517,29 @@ terminated.
 
 <tr>
 <td class="org-left">short</td>
-<td class="org-left">track<sub>count</sub></td>
+<td class="org-left">track count</td>
 <td class="org-left">Always &gt;= 2 and &lt;= 13</td>
 </tr>
 
 
 <tr>
 <td class="org-left">short</td>
-<td class="org-left">ticks<sub>per</sub><sub>quarter</sub><sub>note</sub></td>
-<td class="org-left">"Division" in the Midi spec. All AMBs in Civ 3 use "metric time", i.e., this field specifies the length of a</td>
-</tr>
-
-
-<tr>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">&#xa0;</td>
-<td class="org-left">quarter note in delta time ticks</td>
+<td class="org-left">ticks per quarter note</td>
+<td class="org-left">"Division" in the Midi spec. All AMBs in Civ 3 use "metric time", i.e., this field specifies the length of a quarter note in delta time ticks</td>
 </tr>
 
 
 <tr>
 <td class="org-left">InfoTrack</td>
-<td class="org-left">info<sub>track</sub></td>
+<td class="org-left">info track</td>
 <td class="org-left">First track contains no sound data, just info about the tempo</td>
 </tr>
 
 
 <tr>
 <td class="org-left">SoundTrack[]</td>
-<td class="org-left">sound<sub>tracks</sub></td>
-<td class="org-left">Array length = track<sub>count</sub> - 1</td>
+<td class="org-left">sound tracks</td>
+<td class="org-left">Array length = track count - 1</td>
 </tr>
 </tbody>
 </table>

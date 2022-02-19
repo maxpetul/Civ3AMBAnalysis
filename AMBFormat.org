@@ -3,15 +3,15 @@
   AMB files are used by the game Sid Meier's Civilization III. They describe a sound effect as a combination of sound files with randomized effects
   applied. As far as I know these files were created by Firaxis for Civ 3 and never used for anything else.
 
-* References
+* Useful links
   - Overview of MIDIs:
     https://www.skytopia.com/project/articles/midi.html
   - MIDI spec:
     https://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
   - Previous work:
-    https://forums.civfanatics.com/threads/modifying-amb-files.326218/
-    https://forums.civfanatics.com/threads/sounds-overlapping-repeating.347898/
-    https://forums.civfanatics.com/threads/sounds-question-on-amb-files.112884/#post-2579780
+    - https://forums.civfanatics.com/threads/modifying-amb-files.326218/
+    - https://forums.civfanatics.com/threads/sounds-overlapping-repeating.347898/
+    - https://forums.civfanatics.com/threads/sounds-question-on-amb-files.112884/#post-2579780
 
 * Format overview
   An AMB file is made up of many Prgm and Kmap chunks, exactly one Glbl chunk, and exactly one embedded Midi file. AMBs follow the Resource
@@ -37,37 +37,36 @@
     from the file is also part of the VLQ.
 
 * Prgm chunk
-| TYPE       | CONTENTS         | COMMENT                                                                                                      |
-|------------+------------------+--------------------------------------------------------------------------------------------------------------|
-| tag        | 'prgm'           |                                                                                                              |
-| int        | chunk_size       |                                                                                                              |
-| int        | prgm_number      | Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb |
-|            |                  | both the fifth and eigth prgm chunks have number 5.                                                          |
-| int        | flags            | Bit 0 = random pitch, bit 1 = ?                                                                              |
-| int        | max_random_pitch |                                                                                                              |
-| signed int | min_random_pitch | Often negative                                                                                               |
-| int        | ?                |                                                                                                              |
-| int        | ?                |                                                                                                              |
-| int        | 0xFA             | Chunk end indicator, except in this case there are two more fields                                           |
-| str+0      | effect_name (?)  |                                                                                                              |
-| str+0      | var_name         | Matches names in Kmap chunks                                                                                 |
+| TYPE       | CONTENTS         | COMMENT                                                                                                                                                          |
+|------------+------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| tag        | 'prgm'           |                                                                                                                                                                  |
+| int        | chunk size       |                                                                                                                                                                  |
+| int        | prgm number      | Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb both the fifth and eigth prgm chunks have number 5. |
+| int        | flags            | Bit 0 = random pitch, bit 1 = ?                                                                                                                                  |
+| int        | max random pitch |                                                                                                                                                                  |
+| signed int | min random pitch | Often negative                                                                                                                                                   |
+| int        | ?                |                                                                                                                                                                  |
+| int        | ?                |                                                                                                                                                                  |
+| int        | 0xFA             | Chunk end indicator, except in this case there are two more fields                                                                                               |
+| str+0      | effect name (?)  |                                                                                                                                                                  |
+| str+0      | var name         | Matches names in Kmap chunks                                                                                                                                     |
 
 * KmapItem
 | TYPE     | CONTENTS                                | COMMENT                            |
 |----------+-----------------------------------------+------------------------------------|
 | byte[12] | [0x7F, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0] | Probably 3 4-byte ints: 127, 0, 1. |
-| str+0    | wav_file_name                           |                                    |
+| str+0    | wav file name                           |                                    |
 
 * Kmap chunk
 | TYPE       | CONTENTS   | COMMENT                                                                                                         |
 |------------+------------+-----------------------------------------------------------------------------------------------------------------|
 | tag        | 'kmap'     |                                                                                                                 |
-| int        | chunk_size |                                                                                                                 |
+| int        | chunk size |                                                                                                                 |
 | int        | 2          | Looks like bit flags                                                                                            |
 | int        | 0          |                                                                                                                 |
 | int        | 0          |                                                                                                                 |
-| str+0      | var_name   | Matches name from a Prgm chunk                                                                                  |
-| int        | item_count | Number of items in the following array. All Kmap chunks in Civ 3 have 1 item except for 3 of them which have 0. |
+| str+0      | var name   | Matches name from a Prgm chunk                                                                                  |
+| int        | item count | Number of items in the following array. All Kmap chunks in Civ 3 have 1 item except for 3 of them which have 0. |
 | int        | 12         | Item data size                                                                                                  |
 | KmapItem[] | items      |                                                                                                                 |
 | int        | 0xFA       | Chunk end indicator                                                                                             |
@@ -76,7 +75,7 @@
 | TYPE     | CONTENTS                                         | COMMENT                 |
 |----------+--------------------------------------------------+-------------------------|
 | tag      | 'glbl'                                           |                         |
-| int      | chunk_size                                       |                         |
+| int      | chunk size                                       |                         |
 | int      | 12                                               | Size of following array |
 | byte[12] | [0, 0, 0, 0, 0, 0, 0, 0, 0xCD, 0xCD, 0xCD, 0xCD] |                         |
 
@@ -100,13 +99,12 @@
 | vlq, EndOfTrack event        |                               |
 
 * Embedded Midi
-| TYPE         | CONTENTS               | COMMENT                                                                                                      |
-|--------------+------------------------+--------------------------------------------------------------------------------------------------------------|
-| tag          | 'MThd'                 |                                                                                                              |
-| int          | 6                      | Header size                                                                                                  |
-| short        | 1                      | Midi format                                                                                                  |
-| short        | track_count            | Always >= 2 and <= 13                                                                                        |
-| short        | ticks_per_quarter_note | "Division" in the Midi spec. All AMBs in Civ 3 use "metric time", i.e., this field specifies the length of a |
-|              |                        | quarter note in delta time ticks                                                                             |
-| InfoTrack    | info_track             | First track contains no sound data, just info about the tempo                                                |
-| SoundTrack[] | sound_tracks           | Array length = track_count - 1                                                                               |
+| TYPE         | CONTENTS               | COMMENT                                                                                                                                       |
+|--------------+------------------------+-----------------------------------------------------------------------------------------------------------------------------------------------|
+| tag          | 'MThd'                 |                                                                                                                                               |
+| int          | 6                      | Header size                                                                                                                                   |
+| short        | 1                      | Midi format                                                                                                                                   |
+| short        | track count            | Always >= 2 and <= 13                                                                                                                         |
+| short        | ticks per quarter note | "Division" in the Midi spec. All AMBs in Civ 3 use "metric time", i.e., this field specifies the length of a quarter note in delta time ticks |
+| InfoTrack    | info track             | First track contains no sound data, just info about the tempo                                                                                 |
+| SoundTrack[] | sound tracks           | Array length = track count - 1                                                                                                                |
