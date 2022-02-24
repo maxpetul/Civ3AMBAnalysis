@@ -18,7 +18,9 @@ civ3_root_dir = "C:\\GOG Games\\Civilization III Complete\\"
 
 import os
 
-civ3_unit_art_paths = [civ3_root_dir + "Art\\Units\\", civ3_root_dir + "civ3PTW\\Art\\Units\\", civ3_root_dir + "Conquests\\Art\\Units\\"]
+civ3_unit_art_paths = [os.path.join (civ3_root_dir             , "Art", "Units"),
+                       os.path.join (civ3_root_dir, "civ3PTW"  , "Art", "Units"),
+                       os.path.join (civ3_root_dir, "Conquests", "Art", "Units")]
 
 def read_string (_file):
     tr = b""
@@ -391,7 +393,8 @@ class Amb:
                     raise Exception ("Invalid chunk tag " + str(tag) + " at offset " + str(amb_file.tell() - 4))
 
     def describe (self):
-        print (self.file_path.split ("\\")[-1] + ":")
+        (_, file_name) = os.path.split (self.file_path)
+        print (file_name + ":")
         for c in self.chunks:
             c.describe ()
         self.midi.describe ()
@@ -399,11 +402,11 @@ class Amb:
 all_amb_paths = []
 for art_path in civ3_unit_art_paths:
     for unit_name in os.listdir(art_path):
-        unit_folder = art_path + unit_name
+        unit_folder = os.path.join (art_path, unit_name)
         if os.path.isdir (unit_folder):
             for file_name in os.listdir(unit_folder):
                 if file_name.endswith (".amb") or file_name.endswith (".AMB"):
-                    all_amb_paths.append(unit_folder + "\\" + file_name)
+                    all_amb_paths.append (os.path.join (unit_folder, file_name))
 
 print ("Found " + str (len (all_amb_paths)) + " AMB files")
 
