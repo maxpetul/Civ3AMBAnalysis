@@ -83,7 +83,7 @@ class Prgm:
         #   2. Looks like most values are negative
         #   3. One of [0, 25, 127, 1237]. 1237 occurs once, in JaguarWarriorDeath.amb.
         #   4. One of [0, 10, 127, 75, 785]. 75 is the most common.
-        #   1 & 2 might be upper and lower bounds for randomized pitch/tempo. Judging roughly by ear, +/- 200 corresponds to about +/- 5%.
+        #   1 & 2 are upper and lower bounds for randomized pitch/tempo. +/- 100 points corresponds to about +/- 6%.
         self.dat = []
         for n in range(5):
             self.dat.append (read_amb_int (amb_file, unsigned = False))
