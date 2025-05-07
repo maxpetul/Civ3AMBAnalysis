@@ -499,3 +499,18 @@ def investigate_format ():
     print ("All MIDI sound tracks have non-empty names: " + str (all_sound_tracks_have_names))
     print ("No. of MIDI track names that don't match any PRGM effect names: " + str (unmatched_effect_name_count))
     print ("Any MIDI track names match multiple PRGM effect names: " + str (any_ambiguous_effect_names))
+
+    unreferenced_prgm_chunk_count = 0
+    multi_referenced_prgm_chunk_count = 0
+    for a in ambs.values ():
+        for prgm in a.chunks:
+            if type (prgm) == Prgm:
+                effect_name = prgm.str1
+                ref_count = len([x for x in a.midi.tracks[1:] if x.get_name () == effect_name])
+                if ref_count == 0:
+                    unreferenced_prgm_chunk_count += 1
+                elif ref_count > 1:
+                    multi_referenced_prgm_chunk_count += 1
+
+    print ("No. of PRGM chunks with effect names not referenced by any track: " + str (unreferenced_prgm_chunk_count))
+    print ("No. of PRGM chunks with effect names referenced by two or more tracks: " + str(multi_referenced_prgm_chunk_count))
