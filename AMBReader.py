@@ -514,3 +514,18 @@ def investigate_format ():
 
     print ("No. of PRGM chunks with effect names not referenced by any track: " + str (unreferenced_prgm_chunk_count))
     print ("No. of PRGM chunks with effect names referenced by two or more tracks: " + str(multi_referenced_prgm_chunk_count))
+
+    unreferenced_kmap_chunk_count = 0
+    multi_referenced_kmap_chunk_count = 0
+    for a in ambs.values ():
+        for kmap in a.chunks:
+            if type (kmap) == Kmap:
+                var_name = kmap.str1
+                ref_count = len([x for x in a.chunks if type (x) == Prgm and x.str2 == var_name])
+                if ref_count == 0:
+                    unreferenced_kmap_chunk_count += 1
+                elif ref_count > 1:
+                    multi_referenced_kmap_chunk_count += 1
+
+    print ("No. of KMAP chunks with var names not referenced by any PRGM: " + str (unreferenced_kmap_chunk_count))
+    print ("No. of KMAP chunks with var names referenced by two or more PRGMs: " + str(multi_referenced_kmap_chunk_count))
