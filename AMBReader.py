@@ -466,6 +466,21 @@ def histogram(vals):
     return tr
 
 def investigate_format ():
+    empty_kmap_count = 0
+    one_item_kmap_count = 0
+    multiple_items_kmap_count = 0
+    for kmap in list_all_chunks_of_type (Kmap):
+        if len (kmap.items) == 0:
+            empty_kmap_count += 1
+        elif len (kmap.items) == 1:
+            one_item_kmap_count += 1
+        else:
+            multiple_items_kmap_count += 1
+
+    print ("No. of KMap chunks with no items: " + str (empty_kmap_count))
+    print ("No. of KMap chunks with one item: " + str (one_item_kmap_count))
+    print ("No. of KMap chunks with two or more items: " + str (multiple_items_kmap_count))
+
     all_sound_tracks_have_names = True
     unmatched_effect_name_count = 0
     any_ambiguous_effect_names = False
