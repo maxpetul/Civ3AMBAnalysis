@@ -12,7 +12,7 @@
 ###
 ###
 
-civ3_root_dir = "C:\\GOG Games\\Civilization III Complete\\"
+civ3_root_dir = "/media/c/GOG Games/Civilization III Complete/" # "C:\\GOG Games\\Civilization III Complete\\"
 
 
 
@@ -91,8 +91,8 @@ class Prgm:
         if read_amb_int (amb_file) != 0xFA:
             raise Exception ("Expected (0x FA 00 00 00) before strings in Prgm chunk in \"" + amb_file + "\"")
 
-        self.str1 = read_string (amb_file)
-        self.str2 = read_string (amb_file)
+        self.str1 = read_string (amb_file) # effect name
+        self.str2 = read_string (amb_file) # var name
 
     def describe (self):
         print ("\tprgm\t" + "\t".join ([str (d) for d in self.dat]) + "\t'" + self.str1 + "'  '" + self.str2 + "'")
@@ -319,6 +319,12 @@ class MidiTrack:
     def length (self):
         return sum ([e.delta_time for e in self.events])
 
+    def get_name (self):
+        for event in self.events:
+            if type (event) == MidiTrackName:
+                return event.name
+        return None
+
     def describe (self, seconds_per_tick):
         print ("\t\tTrack:")
         timestamp = 0
@@ -458,3 +464,23 @@ def histogram(vals):
         else:
             tr[v] = 1
     return tr
+
+def investigate_format ():
+    all_sound_tracks_have_names = True
+    unmatched_effect_name_count = 0
+    any_ambiguous_effect_names = False
+    for a in ambs.values ():
+        for track in a.midi.tracks[1:]: # Skip first track which has metadata
+            effect_name = track.get_name ()
+            if effect_name is not None and effect_name != "":
+                matching_prgm_count = len([x for x in a.chunks if type (x) == Prgm and x.str1 == effect_name])
+                if matching_prgm_count == 0:
+                    unmatched_effect_name_count += 1
+                elif matching_prgm_count > 1:
+                    any_ambiguous_effect_names = True
+            else:
+                all_sound_tracks_have_names = False
+
+    print ("All MIDI sound tracks have non-empty names: " + str (all_sound_tracks_have_names))
+    print ("No. of MIDI track names that don't match any PRGM effect names: " + str (unmatched_effect_name_count))
+    print ("Any MIDI track names match multiple PRGM effect names: " + str (any_ambiguous_effect_names))
