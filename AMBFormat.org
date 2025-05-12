@@ -37,19 +37,19 @@
     from the file is also part of the VLQ.
 
 * Prgm chunk
-| TYPE       | CONTENTS         | COMMENT                                                                                                                                                          |
-|------------+------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| tag        | 'prgm'           |                                                                                                                                                                  |
-| int        | chunk size       |                                                                                                                                                                  |
-| int        | prgm number      | Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb both the fifth and eigth prgm chunks have number 5. |
-| int        | flags            | Bitfield, only bottom two are used. Least bit = randomize pitch/tempo, second least = ?.                                                                         |
-| int        | max random pitch | Upper bound for randomized pitch/tempo. Scale is about 6% per 100 points.                                                                                        |
-| signed int | min random pitch | Lower bound for randomized pitch/tempo. Often negative.                                                                                                          |
-| int        | ?                |                                                                                                                                                                  |
-| int        | ?                |                                                                                                                                                                  |
-| int        | 0xFA             | Chunk end indicator, except in this case there are two more fields                                                                                               |
-| str+0      | effect name (?)  |                                                                                                                                                                  |
-| str+0      | var name         | Matches names in Kmap chunks                                                                                                                                     |
+| TYPE       | CONTENTS          | COMMENT                                                                                                                                                          |
+|------------+-------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| tag        | 'prgm'            |                                                                                                                                                                  |
+| int        | chunk size        |                                                                                                                                                                  |
+| int        | prgm number       | Equals n where this is the n-th prgm chunk in the file. There is one exception to this: in ChariotAttack.amb both the fifth and eigth prgm chunks have number 5. |
+| int        | flags             | Bitfield, only bottom two are used. Least bit = randomize playback speed, second least = randomize volume.                                                       |
+| int        | max random speed  | Upper bound for randomized speed. Scale is about 6% per 100 points.                                                                                              |
+| signed int | min random speed  | Lower bound for randomized speed. Often negative.                                                                                                                |
+| int        | max random volume | Upper bound for randomized volume.                                                                                                                               |
+| int        | min random volume | Lower bound for randomized volume.                                                                                                                               |
+| int        | 0xFA              | Chunk end indicator, except in this case there are two more fields                                                                                               |
+| str+0      | effect name (?)   |                                                                                                                                                                  |
+| str+0      | var name          | Matches names in Kmap chunks                                                                                                                                     |
 
 * KmapItem
 | TYPE     | CONTENTS                                | COMMENT                            |
