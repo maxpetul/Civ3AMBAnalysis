@@ -530,3 +530,11 @@ def investigate_format ():
 
     print ("No. of KMAP chunks with var names not referenced by any PRGM: " + str (unreferenced_kmap_chunk_count))
     print ("No. of KMAP chunks with var names referenced by two or more PRGMs: " + str(multi_referenced_kmap_chunk_count))
+
+    any_wave_files_contain_slashes = False
+    for kmap in list_all_chunks_of_type (Kmap):
+        for item in kmap.items:
+            if '/' in item.str1 or '\\' in item.str1:
+                any_wave_files_contain_slashes = True
+
+    print ("Any slashes appear in any wave file names: " + str (any_wave_files_contain_slashes))
