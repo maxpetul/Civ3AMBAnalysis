@@ -538,3 +538,17 @@ def investigate_format ():
                 any_wave_files_contain_slashes = True
 
     print ("Any slashes appear in any wave file names: " + str (any_wave_files_contain_slashes))
+
+    most_prgms = 0
+    most_kmaps = 0
+    most_tracks = 0
+    for a in ambs.values ():
+        most_prgms  = max (most_prgms , len([x for x in a.chunks if type (x) == Prgm]))
+        most_kmaps  = max (most_kmaps , len([x for x in a.chunks if type (x) == Kmap]))
+        most_tracks = max (most_tracks, len(a.midi.tracks))
+    most_events = max([len(x.events) for x in list_all_midi_tracks ()])
+
+    print ("Most PRGM chunks in any file: "  + str(most_prgms))
+    print ("Most KMAP chunks in any file: "  + str(most_kmaps))
+    print ("Most Midi tracks in any file: "  + str(most_tracks))
+    print ("Most events in any Midi track: " + str(most_events))
