@@ -489,7 +489,7 @@ def investigate_format ():
         for track in a.midi.tracks[1:]: # Skip first track which has metadata
             effect_name = track.get_name ()
             if effect_name is not None and effect_name != "":
-                matching_prgm_count = len([x for x in a.chunks if type (x) == Prgm and x.str1 == effect_name])
+                matching_prgm_count = len([x for x in a.chunks if type (x) == Prgm and x.str1.casefold () == effect_name.casefold ()])
                 if matching_prgm_count == 0:
                     unmatched_effect_name_count += 1
                 elif matching_prgm_count > 1:
@@ -507,7 +507,7 @@ def investigate_format ():
         for prgm in a.chunks:
             if type (prgm) == Prgm:
                 effect_name = prgm.str1
-                ref_count = len([x for x in a.midi.tracks[1:] if x.get_name () == effect_name])
+                ref_count = len([x for x in a.midi.tracks[1:] if x.get_name ().casefold () == effect_name.casefold ()])
                 if ref_count == 0:
                     unreferenced_prgm_chunk_count += 1
                 elif ref_count > 1:
@@ -518,13 +518,14 @@ def investigate_format ():
 
     unreferenced_kmap_chunk_count = 0
     multi_referenced_kmap_chunk_count = 0
-    for a in ambs.values ():
-        for kmap in a.chunks:
+    for file_name, amb in ambs.items ():
+        for kmap in amb.chunks:
             if type (kmap) == Kmap:
                 var_name = kmap.str1
-                ref_count = len([x for x in a.chunks if type (x) == Prgm and x.str2 == var_name])
+                ref_count = len([x for x in amb.chunks if type (x) == Prgm and x.str2 == var_name])
                 if ref_count == 0:
                     unreferenced_kmap_chunk_count += 1
+                    # print (f"\t{var_name}\tin {file_name}")  # Print unmatched var names
                 elif ref_count > 1:
                     multi_referenced_kmap_chunk_count += 1
 
