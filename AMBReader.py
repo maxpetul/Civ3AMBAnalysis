@@ -552,3 +552,13 @@ def investigate_format ():
     print ("Most KMAP chunks in any file: "  + str(most_kmaps))
     print ("Most Midi tracks in any file: "  + str(most_tracks))
     print ("Most events in any Midi track: " + str(most_events))
+
+    all_times_zero_before_note_on = True
+    for a in ambs.values ():
+        for track in a.midi.tracks[1:]: # Skip info track
+            event_index = 0
+            while type (track.events[event_index]) != MidiNoteOn:
+                if track.events[event_index].delta_time != 0:
+                    all_times_zero_before_note_on = False
+                event_index += 1
+    print ("All event times zero before NoteOn: " + str(all_times_zero_before_note_on))
