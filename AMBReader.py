@@ -95,6 +95,9 @@ class Prgm:
         self.str1 = read_string (amb_file) # effect name
         self.str2 = read_string (amb_file) # var name
 
+    def compute_size (self):
+        return 30 + len(self.str1) + len(self.str2) # 7 ints * 4 bytes per + 2 null terminators + length of both strings
+
     def describe (self):
         print ("\tprgm\t" + "\t".join ([str (d) for d in self.dat]) + "\t'" + self.str1 + "'  '" + self.str2 + "'")
 
@@ -132,6 +135,12 @@ class Kmap:
 
         if read_amb_int (amb_file) != 0xFA:
             raise Exception ("Expected (0x FA 00 00 00) at end of Kmap chunk in \"" + amb_file + "\"")
+
+    def compute_size (self):
+        size = 20 + len(self.str1) + 5 # 5 ints * 4 bytes per + length of str1 + null term. + 4-byte end indicator
+        for item in self.items:
+            size += 12 + len(item.str1) + 1 # 12 bytes of ??? + length of str 1 + null term.
+        return size
 
     def describe (self):
         item_descriptions = [i.get_description () for i in self.items]
@@ -563,3 +572,18 @@ def investigate_format ():
                     all_times_zero_before_note_on = False
                 event_index += 1
     print ("All event times zero before NoteOn: " + str(all_times_zero_before_note_on))
+
+    unexpected_prgm_size_count = 0
+    unexpected_size_kmaps = []
+    for prgm in list_all_chunks_of_type (Prgm):
+        if prgm.size != prgm.compute_size ():
+            unexpected_prgm_size_count += 1
+    for file_name, amb in ambs.items ():
+        for kmap in amb.chunks:
+            if type (kmap) == Kmap:
+                if kmap.size != kmap.compute_size ():
+                    unexpected_size_kmaps.append(f"{kmap.str1} in {file_name}")
+    print ("No. of PRGM chunks with unexpected sizes: " + str(unexpected_prgm_size_count))
+    print ("No. of KMAP chunks with unexpected sizes: " + str(len(unexpected_size_kmaps)))
+    for x in unexpected_size_kmaps:
+        print ("  " + x)
